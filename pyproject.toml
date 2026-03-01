@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "routerosc"
+version = "0.1.0"
+description = "Asynchronous Python client for MikroTik RouterOS API"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [{name = "aslnt"}]
