@@ -1,5 +1,7 @@
 # routerosc
 
+An asynchronous Python client for MikroTik RouterOS API.
+
 
 ## Example
 
