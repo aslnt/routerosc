@@ -23,6 +23,12 @@ class Client:
     def __call__(self, *args, **kwargs):
         return create_execution(self.dispatcher, *args, **kwargs)
 
+    async def do(self, *args, **kwargs):
+        async with self(*args, **kwargs) as execution:
+            async for _ in execution:
+                continue
+            return execution.result
+
     async def get(self, *args, **kwargs):
         async with self(*args, **kwargs) as execution:
             output = []
