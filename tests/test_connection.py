@@ -58,7 +58,7 @@ class ConnectionReadTest(ConnectionTest):
         parse_reply.return_value = s.reply
         self.assertEqual(await self.connection.read(), s.reply)
         parse_reply.assert_called_once_with(s.sentence)
-        read_sentence.assert_called_once_with(self.reader)
+        read_sentence.assert_awaited_once_with(self.reader)
 
     async def test_bad_reply(self, _, parse_reply):
         parse_reply.side_effect = ValueError
