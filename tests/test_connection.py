@@ -32,7 +32,7 @@ class ConnectionSendTest(ConnectionTest):
         dump_command.return_value = s.sentence
         await self.connection.send(s.name, s.attributes, s.query, s.api)
         dump_command.assert_called_once_with(s.name, s.attributes, s.query, s.api)
-        send_sentence.assert_called_once_with(self.writer, s.sentence)
+        send_sentence.assert_awaited_once_with(self.writer, s.sentence)
 
     async def test_bad_command(self, dump_command, _):
         dump_command.side_effect = ValueError
