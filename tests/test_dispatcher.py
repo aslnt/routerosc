@@ -77,7 +77,7 @@ class DispatcherReadTest(DispatcherTest):
         await self.assert_reading()
 
     async def test_unexpected_reply(self):
-        self.feed(s.unexpected_reply)
+        self.feed((s.kind, s.data, {}))
         await self.assert_stopped(RuntimeError)
 
     async def test_fatal_reply(self):
