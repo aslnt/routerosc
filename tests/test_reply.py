@@ -18,6 +18,8 @@ BAD_SENTENCES = [
 
     [b''],
 
+    [b'x'],
+
     [b'!'],
 
     [b'!x', b'x'],
