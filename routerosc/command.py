@@ -56,5 +56,8 @@ def dump_query(query):
             for ex in exs: yield from dump_query(ex)
             yield b'?#' + op.encode() * (len(exs) - 1)
 
+        case ['!=', an, av]:
+            yield from dump_query(('!', ('=', an, av)))
+
         case _:
             raise ValueError(f"Bad query: {query!r}")
