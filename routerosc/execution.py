@@ -44,7 +44,7 @@ class Execution:
                 case [b'!fatal', reason]:
                     raise errors.ServiceError(reason)
                 case reply:
-                    raise RuntimeError(f"Unexpected reply: {reply}")
+                    raise RuntimeError(f"Unexpected reply: {reply!r}")
         if self.errors:
             raise errors.CommandError(self)
 

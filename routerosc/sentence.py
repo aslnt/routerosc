@@ -13,7 +13,7 @@ def encode_word(word):
 
 def encode_length(length):
     if not 0 != length < 0x100000000:
-        raise ValueError(f"Bad length: {length}")
+        raise ValueError(f"Bad length: {length!r}")
 
     if length >= 0x10000000:
         length |= 0xf000000000
@@ -52,4 +52,4 @@ async def read_length(reader):
     if byte == b'\xf0':
         return int.from_bytes(await reader.readexactly(4))
 
-    raise RuntimeError(f"Unexpected byte: {byte}")
+    raise RuntimeError(f"Unexpected byte: {byte!r}")
