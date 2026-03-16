@@ -12,7 +12,7 @@ def encode_word(word):
 
 
 def encode_length(length):
-    if 0 == length or length >= 0x100000000:
+    if not 0 != length < 0x100000000:
         raise ValueError(f"Bad length: {length}")
 
     if length >= 0x10000000:
