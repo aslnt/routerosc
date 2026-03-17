@@ -59,5 +59,8 @@ def dump_query(query):
         case ['!=', an, av]:
             yield from dump_query(('!', ('=', an, av)))
 
+        case ['>=', an, av]:
+            yield from dump_query(('|', ('>', an, av), ('=', an, av)))
+
         case _:
             raise ValueError(f"Bad query: {query!r}")
