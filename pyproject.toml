@@ -9,4 +9,4 @@ description = "Asynchronous Python client for MikroTik RouterOS API"
 readme = "README.md"
 license = {file = "LICENSE"}
 authors = [{name = "aslnt"}]
-requires-python = ">= 3.11"
+requires-python = ">= 3.10"

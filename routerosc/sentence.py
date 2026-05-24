@@ -24,7 +24,7 @@ def encode_length(length):
     elif length >= 0x80:
         length |= 0x8000
 
-    return length.to_bytes((length.bit_length() + 7) // 8)
+    return length.to_bytes((length.bit_length() + 7) // 8, 'big')
 
 
 async def read_sentence(reader):
@@ -42,14 +42,14 @@ async def read_length(reader):
     byte = await reader.readexactly(1)
 
     if byte < b'\x80':
-        return int.from_bytes(byte)
+        return int.from_bytes(byte, 'big')
     if byte < b'\xc0':
-        return int.from_bytes(byte + await reader.readexactly(1)) ^ 0x8000
+        return int.from_bytes(byte + await reader.readexactly(1), 'big') ^ 0x8000
     if byte < b'\xe0':
-        return int.from_bytes(byte + await reader.readexactly(2)) ^ 0xC00000
+        return int.from_bytes(byte + await reader.readexactly(2), 'big') ^ 0xC00000
     if byte < b'\xf0':
-        return int.from_bytes(byte + await reader.readexactly(3)) ^ 0xE0000000
+        return int.from_bytes(byte + await reader.readexactly(3), 'big') ^ 0xE0000000
     if byte == b'\xf0':
-        return int.from_bytes(await reader.readexactly(4))
+        return int.from_bytes(await reader.readexactly(4), 'big')
 
     raise RuntimeError(f"Unexpected byte: {byte!r}")
