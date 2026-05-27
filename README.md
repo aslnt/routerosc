@@ -44,16 +44,28 @@ async with routerosc.connect(host, port) as client:
 ```
 
 
-## API Reference
+## API reference
+
+- [`connect()`](#connect)
+- [`class Client`](#class-client)
+- [`class Execution`](#class-execution)
+- [`exception CommandError`](#exception-commanderror)
+- [`exception ServiceError`](#exception-serviceerror)
+- [Query expression](#query-expression)
+- [Encoding](#encoding)
 
 
-### `async connect(host, port=8728)`
+### `connect()`
 
-Connects to a router and returns a [`Client`](#class-client) instance.
+`def connect(host, port=8728, *, queue_size=10): ...`
 
-`host` is a string specifying the address of the router.
+Connects to a router and returns a [`Client`](#class-client) instance when awaited or used with `async with`.
 
-`port` is an integer specifying the network port number of the API service.
+`host` is the domain name or IPv4/v6 address of the router.
+
+`port` is the network port number of the API service.
+
+`queue_size` is the maximum number of replies queued per command before backpressure takes effect.
 
 
 ### `class Client`
@@ -63,35 +75,45 @@ Manages the connection and provides an interface for executing commands.
 
 #### `Client` as an asynchronous context manager
 
-[Closes](#async-clientclose) the client on exit from the block.
+[Closes](#clientclose) the client on exit from the block.
 
 
-#### `async Client.do(command, attributes={}, query=None)`
+#### `Client.do()`
+
+`async def do(self, command, attributes={}, query=None): ...`
 
 Sends a command and returns the [result](#executionresult).
 
-See [`Client.__call__()`](#async-client__call__command-attributes-querynone) for the meaning of `command`, `attributes` and `query`.
+See [`Client.__call__()`](#client__call__) for the meaning of `command`, `attributes` and `query`.
 
 
-#### `async Client.get(command, attributes={}, query=None)`
+#### `Client.get()`
+
+`async def get(self, command, attributes={}, query=None): ...`
 
 Sends a command and returns the [output](#execution-as-an-asynchronous-iterator).
 
-See [`Client.__call__()`](#async-client__call__command-attributes-querynone) for the meaning of `command`, `attributes` and `query`.
+See [`Client.__call__()`](#client__call__) for the meaning of `command`, `attributes` and `query`.
 
 
-#### `async Client.__call__(command, attributes={}, query=None)`
+#### `Client.__call__()`
 
-Sends a command and returns an [`Execution`](#class-execution) instance.
+`def __call__(self, command, attributes={}, query=None): ...`
+
+Sends a command and returns an [`Execution`](#class-execution) instance when awaited or used with `async with`.
 
 `command` is a string specifying the command to execute (with slashes instead of spaces).
 
-`attributes` is a dictionary mapping attribute names (strings) to values (any objects).
+`attributes` is a dictionary mapping attribute names (strings) to values (of any type).
 
-`query` is a [query expression](#query-expression) to filter the command output.
+`query` is a [query expression](#query-expression) used to filter the command output.
+
+See [Encoding](#encoding) for details on how data is encoded before sending.
 
 
-#### `async Client.close()`
+#### `Client.close()`
+
+`async def close(self): ...`
 
 Closes the connection.
 
@@ -103,7 +125,7 @@ Manages the command execution and provides access to its [output](#execution-as-
 
 #### `Execution` as an asynchronous context manager
 
-[Closes](#async-executionclose) the execution on exit from the block.
+[Closes](#executionclose) the execution on exit from the block.
 
 
 #### `Execution` as an asynchronous iterator
@@ -123,24 +145,16 @@ An error is a dictionary containing: `"message"` — a byte string; `"category"`
 On success, a dictionary mapping property names (strings) to values (byte strings); on failure, `None`.
 
 
-#### `async Execution.close()`
+#### `Execution.close()`
 
-Stops executing the command.
+`async def close(self): ...`
 
-
-### `exception ServiceError`
-
-Raised when the API service closes the connection due to an error.
-
-
-#### `ServiceError.reason`
-
-A byte string describing the error.
+Stops executing the command (sends an additional (control) command).
 
 
 ### `exception CommandError`
 
-Raised when the command fails.
+Raised when a command fails.
 
 
 #### `CommandError.execution`
@@ -148,12 +162,22 @@ Raised when the command fails.
 The failed [execution](#class-execution) (with at least one [error](#executionerrors)).
 
 
+### `exception ServiceError`
+
+Raised when an API service closes the connection due to an error.
+
+
+#### `ServiceError.reason`
+
+A byte string describing the error.
+
+
 ### Query expression
 
 A boolean expression specified as a sequence where the first element is an operator and the remaining elements are operands.
 
 
-#### Query expression operators
+#### Query operators
 
 * `('?', property)` — whether `property` is set
 * `('?-', property)` — whether `property` is not set
@@ -166,3 +190,14 @@ A boolean expression specified as a sequence where the first element is an opera
 * `('!', expression)` — whether `expression` is `False`
 * `('&', *expressions)` — whether all of `expressions` are `True`
 * `('|', *expressions)` — whether any of `expressions` is `True`
+
+where:
+- `property` is a string specifying the property name
+- `value` is an object of any type specifying the property value
+
+See [Encoding](#encoding) for details on how data is encoded before sending.
+
+
+### Encoding
+
+Byte strings are sent as-is; other objects are converted to strings and encoded using UTF-8.
