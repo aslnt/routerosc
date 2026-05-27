@@ -5,8 +5,10 @@ from .reply import parse_reply
 from .sentence import read_sentence, send_sentence
 
 
-async def create(host, port=8728):
-    return Connection(*await asyncio.open_connection(host, port))
+async def create(host, port=None, *, ssl=None):
+    if port is None:
+        port = 8729 if ssl else 8728
+    return Connection(*await asyncio.open_connection(host, port, ssl=ssl))
 
 
 class Connection:

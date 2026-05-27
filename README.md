@@ -57,13 +57,15 @@ async with routerosc.connect(host, port) as client:
 
 ### `connect()`
 
-`def connect(host, port=8728, *, queue_size=10): ...`
+`def connect(host, port=None, *, ssl=None, queue_size=10): ...`
 
 Connects to a router and returns a [`Client`](#class-client) instance when awaited or used with `async with`.
 
 `host` is the domain name or IPv4/v6 address of the router.
 
-`port` is the network port number of the API service.
+`port` is the network port number of the API service. Defaults to `8729` if `ssl` is given; otherwise, `8728`.
+
+`ssl` is an [SSL context](https://docs.python.org/3/library/ssl.html#ssl.SSLContext) used to establish a secure connection.
 
 `queue_size` is the maximum number of replies queued per command before backpressure takes effect.
 
